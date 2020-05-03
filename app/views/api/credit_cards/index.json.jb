@@ -1,0 +1,27 @@
+@credit_cards.map do |credit_card|
+  {
+    id: credit_card.id,
+    institution_name: credit_card.institution_name,
+    card_name: credit_card.card_name,
+    annual_fee: credit_card.annual_fee,
+    sign_on_bonus_spending_min_dollars: credit_card.sign_on_bonus_spending_min_dollars,
+    sign_on_bonus_time_constraint_days: credit_card.sign_on_bonus_time_constraint_days,
+    sign_on_bonus_points: credit_card.sign_on_bonus_points,
+    travel_credit_dollars: credit_card.travel_credit_dollars,
+    percent_back_dining: credit_card.percent_back_dining,
+    percent_back_travel: credit_card.percent_back_travel,
+    percent_back_non_travel_non_dining: credit_card.percent_back_non_travel_non_dining,
+    travel_multiplier: credit_card.travel_multiplier,
+    lyft_percent_back: credit_card.lyft_percent_back,
+    lyft_pink_membership: credit_card.lyft_pink_membership,
+    dashpass_membership: credit_card.dashpass_membership,
+    doordash_credit: credit_card.doordash_credit,
+    priority_pass_select_membership: credit_card.priority_pass_select_membership,
+    global_entry_application_fee_credit_dollars: credit_card.global_entry_application_fee_credit_dollars,
+    tsa_precheck_application_fee_credit_dollars: credit_card.tsa_precheck_application_fee_credit_dollars,
+    visa_infinite_perks: credit_card.visa_infinite_perks,
+    zero_foreign_transaction_fees: credit_card.zero_foreign_transaction_fees,
+    created_at: credit_card.created_at,
+    updated_at: credit_card.updated_at
+  }
+end
