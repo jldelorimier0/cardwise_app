@@ -31,25 +31,26 @@ class Api::CreditCardsController < ApplicationController
   end
   p "BEFORE THE CSR COST BENEFIT METHOD"
   def chase_sapphire_reserve_cost_benefit_analysis
-    answers = { :spending_total_all_credit_cards_monthly => 2300,
-      :spending_amount_movable_monthly => true, 
-      :spending_willing_to_change_credit_cards_monthly => "na", 
-      :spending_lyft_total_monthly => 80, 
-      :personal_value_lyft_priority_airport_pickup_12mo => 60, 
-      :personal_value_lyft_cancel_ride_times_monthly => 0, 
-      :personal_value_lyft_lose_something_times_12mo => 1, 
-      :spending_meal_deliverly_total_monthly => 0, 
-      :spending_meal_deliverly_delivery_fee_monthly => 0, 
-      :spending_travel_flights_next_12mo => 4000, 
-      :spending_travel_hotels_next_12mo => 0, 
-      :personal_value_travel_airport_lounge_access_12mo => 80, 
-      :personal_value_concierge_service => 0, 
-      :spending_dining_total_monthly => 450, 
-      :global_entry_boolean => true, 
-      :tsa_pre_boolean => "na", 
-      :personal_value_global_entry_and_tsa_pre => "na", 
-      :personal_value_global_entry => "na", 
-      :personal_value_tsa_pre => "na"
+    answers = { 
+      :spending_total_all_credit_cards_monthly => @user.spending_total_all_credit_cards_monthly,
+      :spending_amount_movable_monthly => @user.spending_amount_movable_monthly, 
+      :spending_willing_to_change_credit_cards_monthly => @user.spending_willing_to_change_credit_cards_monthly, 
+      :spending_lyft_total_monthly => @user.spending_lyft_total_monthly, 
+      :personal_value_lyft_priority_airport_pickup_12mo => @user.personal_value_lyft_priority_airport_pickup_12mo, 
+      :personal_value_lyft_cancel_ride_times_monthly => @user.personal_value_lyft_cancel_ride_times_monthly, 
+      :personal_value_lyft_lose_something_times_12mo => @user.personal_value_lyft_lose_something_times_12mo, 
+      :spending_meal_deliverly_total_monthly => @user.spending_meal_deliverly_total_monthly, 
+      :spending_meal_deliverly_delivery_fee_monthly => @user.spending_meal_deliverly_delivery_fee_monthly, 
+      :spending_travel_flights_next_12mo => @user.spending_travel_flights_next_12mo, 
+      :spending_travel_hotels_next_12mo => @user.spending_travel_hotels_next_12mo, 
+      :personal_value_travel_airport_lounge_access_12mo => @user.personal_value_travel_airport_lounge_access_12mo, 
+      :personal_value_concierge_service => @user.personal_value_concierge_service, 
+      :spending_dining_total_monthly => @user.spending_dining_total_monthly, 
+      :global_entry_boolean => @user.global_entry_boolean, 
+      :tsa_pre_boolean => @user.tsa_pre_boolean, 
+      :personal_value_global_entry_and_tsa_pre => @user.personal_value_global_entry_and_tsa_pre, 
+      :personal_value_global_entry => @user.personal_value_global_entry, 
+      :personal_value_tsa_pre => @user.personal_value_tsa_pre
     }
     p "*******************"
     p answers[:spending_total_all_credit_cards_monthly]
