@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_30_015532) do
+ActiveRecord::Schema.define(version: 2020_05_09_183214) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -38,6 +38,33 @@ ActiveRecord::Schema.define(version: 2020_04_30_015532) do
     t.boolean "zero_foreign_transaction_fees"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "name"
+    t.string "email"
+    t.string "password_digest"
+    t.integer "spending_total_all_credit_cards_monthly"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.boolean "spending_amount_movable_monthly"
+    t.integer "spending_willing_to_change_credit_cards_monthly"
+    t.integer "spending_lyft_total_monthly"
+    t.integer "personal_value_lyft_priority_airport_pickup_12mo"
+    t.integer "personal_value_lyft_cancel_ride_times_monthly"
+    t.integer "personal_value_lyft_lose_something_times_12mo"
+    t.integer "spending_meal_deliverly_total_monthly"
+    t.integer "spending_meal_deliverly_delivery_fee_monthly"
+    t.integer "spending_travel_flights_next_12mo"
+    t.integer "spending_travel_hotels_next_12mo"
+    t.integer "personal_value_travel_airport_lounge_access_12mo"
+    t.integer "personal_value_concierge_service"
+    t.integer "spending_dining_total_monthly"
+    t.boolean "global_entry_boolean"
+    t.boolean "tsa_pre_boolean"
+    t.integer "personal_value_global_entry_and_tsa_pre"
+    t.integer "personal_value_global_entry"
+    t.integer "personal_value_tsa_pre"
   end
 
 end
