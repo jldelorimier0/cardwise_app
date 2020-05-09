@@ -85,14 +85,27 @@ class Api::CreditCardsController < ApplicationController
     # p answers[:spending_total_all_credit_cards_monthly]
     card = CreditCard.first
     benefit = 0
+    user_monthly_spending = answers[:spending_total_all_credit_cards_monthly]
+    user_annual_spending = user_monthly_spending*12
+    user_travel_spending_annual_simple = answers[:spending_lyft_total_monthly]*12 + answers[:spending_travel_flights_next_12mo] + answers[:spending_travel_hotels_next_12mo]
+    p "The user_monthly_spending variable is $#{user_monthly_spending}"
+    p "The user_annual_spending variable is $#{user_annual_spending}"
+    p "The user_travel_spending_annual_simple variable is $#{user_travel_spending_annual_simple}"
+
     if 
-      answers[:spending_total_all_credit_cards_monthly]*3 >= 4000
-      benefit += 4000
+      user_monthly_spending*3 >= 4000 
+      if user_travel_spending_annual_simple >= 300
+        benefit+=300 
+        p "Adding $300 to benefits for travel credit"
+      elsif user_travel_spending_annual_simple
+        benefit+=user_travel_spending_annual_simple
+        p "Adding #{user_travel_spending_annual_simple} to benefits for travel credit"
+      end
     else 
-      benefit += 2000
     end
     # find_by(card_name: "Chase Sapphire Reserve")
     cost = card.annual_fee
+    p "THE CURRENT BENEFIT IS #{benefit}"
     p "THE COST IS #{cost}"
     netbenefit = benefit - cost
     render json: {netbenefit: netbenefit, benefit: benefit}
