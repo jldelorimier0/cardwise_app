@@ -92,17 +92,30 @@ class Api::CreditCardsController < ApplicationController
     p "The user_annual_spending variable is $#{user_annual_spending}"
     p "The user_travel_spending_annual_simple variable is $#{user_travel_spending_annual_simple}"
 
-    if 
-      user_monthly_spending*3 >= 4000 
-      if user_travel_spending_annual_simple >= 300
-        benefit+=300 
-        p "Adding $300 to benefits for travel credit"
-      elsif user_travel_spending_annual_simple
-        benefit+=user_travel_spending_annual_simple
-        p "Adding #{user_travel_spending_annual_simple} to benefits for travel credit"
-      end
-    else 
+    if user_travel_spending_annual_simple >= 300
+      benefit += 300
+      p "Adding $300 to benefits for travel credit"
+    elsif user_travel_spending_annual_simple <300
+      benefit += user_travel_spending_annual_simple
+      p "Adding #{user_travel_spending_annual_simple} to benefits for travel credit"
+    else
     end
+
+
+
+    #THE METHOD BELOW IS INCORRECT. You don't get a $300 credit for a $4000 spending in 3 months. You've conflated two different benefits here.
+    # if 
+    #   user_monthly_spending*3 >= 4000 
+    #   if user_travel_spending_annual_simple >= 300
+    #     benefit+=300 
+    #     p "Adding $300 to benefits for travel credit"
+    #   elsif user_travel_spending_annual_simple
+    #     benefit+=user_travel_spending_annual_simple
+    #     p "Adding #{user_travel_spending_annual_simple} to benefits for travel credit"
+    #   end
+    # else 
+    # end
+    #THE FIND_BY LINE BELOW IS SUPPOSED TO BE COMMENTED OUT... IT'S GIVING ME AN ERROR AND I THINK HAS A SYNTAX ISSUE AND SEEMS TO NOT BE NEEDED.
     # find_by(card_name: "Chase Sapphire Reserve")
     cost = card.annual_fee
     p "THE CURRENT BENEFIT IS #{benefit}"
