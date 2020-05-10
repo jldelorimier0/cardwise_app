@@ -38,14 +38,14 @@ class Api::CreditCardsController < ApplicationController
       spending_total_all_credit_cards_monthly: 2300,
       spending_amount_movable_monthly: true, 
       # spending_willing_to_change_credit_cards_monthly: "na", 
-      spending_lyft_total_monthly: 80,
+      spending_lyft_total_monthly: 0,
       #80 
       personal_value_lyft_priority_airport_pickup_12mo: 60, 
       personal_value_lyft_cancel_ride_times_monthly: 0, 
       personal_value_lyft_lose_something_times_12mo: 1, 
       spending_meal_deliverly_total_monthly: 0, 
       spending_meal_deliverly_delivery_fee_monthly: 0, 
-      spending_travel_flights_next_12mo: 4000, 
+      spending_travel_flights_next_12mo: 800, 
       #4000
       spending_travel_hotels_next_12mo: 0, 
       personal_value_travel_airport_lounge_access_12mo: 80, 
@@ -112,15 +112,24 @@ class Api::CreditCardsController < ApplicationController
         user_travel_spending_annual_simple -= 750
         p "Adding $750 to benefits for travel credit; subtracting $750 from total annual travel spending for future benefit analysis."
       elsif user_travel_spending_annual_simple < 750
+        p "Adding #{user_travel_spending_annual_simple} to benefit"
         benefit += user_travel_spending_annual_simple
-        p "Adding #{user_travel_spending_annual_simple} to benefits for travel credit; subtracting $#{user_travel_spending_annual_simple} from total annual travel spending for future benefit analysis."
+        p "The benefit is now #{benefit}"
+        fiveHundredDividedByOnePointFive = user_travel_spending_annual_simple/1.5
+        p "fiveHundredDividedByOnePointFive = #{user_travel_spending_annual_simple/1.5}"
+        leftover_points_after_used_for_travel = card.sign_on_bonus_points - (user_travel_spending_annual_simple/1.5)*100
+        p "You have #{leftover_points_after_used_for_travel} points left from your sign-on bonus after using the rest of them on travel."
+        p "Subtracting $#{user_travel_spending_annual_simple} from the user_travel_spending_annual_simple variable."
+        user_travel_spending_annual_simple -= user_travel_spending_annual_simple
+        p "Adding $#{leftover_points_after_used_for_travel/100} to your benefit for cash back after using the rest of your sign-on bonus points towards travel."
+        benefit += leftover_points_after_used_for_travel/100
       else
       end
     else
       #you get no sign on bonus, so nothing happens.
     end
     p "The user_travel_spending_annual_simple variable is now $#{user_travel_spending_annual_simple}."
-    p "The benefit to the user is now #{benefit}."
+    p "The benefit to the user is now $#{benefit}."
 
 
 
@@ -139,8 +148,8 @@ class Api::CreditCardsController < ApplicationController
     #THE FIND_BY LINE BELOW IS SUPPOSED TO BE COMMENTED OUT... IT'S GIVING ME AN ERROR AND I THINK HAS A SYNTAX ISSUE AND SEEMS TO NOT BE NEEDED.
     # find_by(card_name: "Chase Sapphire Reserve")
     cost = card.annual_fee
-    p "THE CURRENT BENEFIT IS #{benefit}"
-    p "THE COST IS #{cost}"
+    p "THE CURRENT BENEFIT IS $#{benefit}"
+    p "THE COST IS $#{cost}"
     netbenefit = benefit - cost
     render json: {netbenefit: netbenefit, benefit: benefit}
     # This is what my rspec file sees:
