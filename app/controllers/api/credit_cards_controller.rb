@@ -38,13 +38,15 @@ class Api::CreditCardsController < ApplicationController
       spending_total_all_credit_cards_monthly: 2300,
       spending_amount_movable_monthly: true, 
       # spending_willing_to_change_credit_cards_monthly: "na", 
-      spending_lyft_total_monthly: 80, 
+      spending_lyft_total_monthly: 80,
+      #80 
       personal_value_lyft_priority_airport_pickup_12mo: 60, 
       personal_value_lyft_cancel_ride_times_monthly: 0, 
       personal_value_lyft_lose_something_times_12mo: 1, 
       spending_meal_deliverly_total_monthly: 0, 
       spending_meal_deliverly_delivery_fee_monthly: 0, 
       spending_travel_flights_next_12mo: 4000, 
+      #4000
       spending_travel_hotels_next_12mo: 0, 
       personal_value_travel_airport_lounge_access_12mo: 80, 
       personal_value_concierge_service: 0, 
@@ -94,12 +96,31 @@ class Api::CreditCardsController < ApplicationController
 
     if user_travel_spending_annual_simple >= 300
       benefit += 300
-      p "Adding $300 to benefits for travel credit"
+      user_travel_spending_annual_simple -= 300
+      p "Adding $300 to benefits for travel credit; subtracting $300 from total annual travel spending for future benefit analysis."
     elsif user_travel_spending_annual_simple <300
       benefit += user_travel_spending_annual_simple
-      p "Adding #{user_travel_spending_annual_simple} to benefits for travel credit"
+      user_travel_spending_annual_simple -= user_travel_spending_annual_simple
+      p "Adding #{user_travel_spending_annual_simple} to benefits for travel credit; subtracting $#{user_travel_spending_annual_simple} from total annual travel spending for future benefit analysis."
     else
     end
+    p "The user_travel_spending_annual_simple variable is now $#{user_travel_spending_annual_simple}"
+    p "The benefit to the user is now #{benefit}."
+    if user_monthly_spending * 3 >= 4000
+      if user_travel_spending_annual_simple >= 750
+        benefit+=750
+        user_travel_spending_annual_simple -= 750
+        p "Adding $750 to benefits for travel credit; subtracting $750 from total annual travel spending for future benefit analysis."
+      elsif user_travel_spending_annual_simple < 750
+        benefit += user_travel_spending_annual_simple
+        p "Adding #{user_travel_spending_annual_simple} to benefits for travel credit; subtracting $#{user_travel_spending_annual_simple} from total annual travel spending for future benefit analysis."
+      else
+      end
+    else
+      #you get no sign on bonus, so nothing happens.
+    end
+    p "The user_travel_spending_annual_simple variable is now $#{user_travel_spending_annual_simple}."
+    p "The benefit to the user is now #{benefit}."
 
 
 
