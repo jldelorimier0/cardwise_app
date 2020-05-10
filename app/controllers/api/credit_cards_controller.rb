@@ -42,7 +42,9 @@ class Api::CreditCardsController < ApplicationController
       personal_value_lyft_priority_airport_pickup_12mo: 60, 
       personal_value_lyft_cancel_ride_times_monthly: 0, 
       personal_value_lyft_lose_something_times_12mo: 1, 
-      spending_meal_deliverly_total_monthly: 0, 
+      spending_meal_deliverly_total_monthly: 2,
+      #30
+      #0 
       spending_meal_deliverly_delivery_fee_monthly: 0, 
       spending_travel_flights_next_12mo: 4000, 
       #800
@@ -93,6 +95,8 @@ class Api::CreditCardsController < ApplicationController
     user_dining_annual_spending = user_dining_monthly_spending*12
     user_lyft_monthly_spending = answers[:spending_lyft_total_monthly]
     user_lyft_annual_spending = user_lyft_monthly_spending*12
+    user_meal_delivery_total_monthly = answers[:spending_meal_deliverly_total_monthly]
+    user_meal_delivery_total_annual = user_meal_delivery_total_monthly*12
     points = 0
     p "The user_monthly_spending variable is $#{user_monthly_spending}"
     p "The user_annual_spending variable is $#{user_annual_spending}"
@@ -101,6 +105,8 @@ class Api::CreditCardsController < ApplicationController
     p "The user_dining_annual_spending variable is $#{user_dining_annual_spending}"
     p "The user_lyft_monthly_spending variable is $#{user_lyft_monthly_spending}"
     p "The user_lyft_annual_spending variable is $#{user_lyft_annual_spending}"
+    p "The user_meal_delivery_total_monthly variable is $#{user_meal_delivery_total_monthly}"
+    p "The user_meal_delivery_total_annual variable is $#{user_meal_delivery_total_annual}"
     p "Points earned so far is 0."
 
     # $300 ANNUAL TRAVEL CREDIT
@@ -174,6 +180,23 @@ class Api::CreditCardsController < ApplicationController
     p "Adding #{lyft_annual_spending_after_15_percent_off * 10} points for the user from their annual Lyft spending (after accounting for 15% off)."
     points += lyft_annual_spending_after_15_percent_off * 10
     p "The user now has #{points} points."
+
+    # $60 ANNUAL DOORDASH CREDIT
+    if user_meal_delivery_total_annual >=60
+      p "Adding $60 to benefits for $60 DashPass Credit."
+      benefit+=60
+    elsif user_meal_delivery_total_annual <60
+      p "Adding $#{user_meal_delivery_total_annual} to benefits for DashPass Credit."
+      benefit+=user_meal_delivery_total_annual
+    else
+      p "User benefit is now #{benefit}"
+    end
+
+
+    
+
+    # GLOBAL ENTRY/TSA PRE-CHECK APPLICATION CREDITS:
+
 
 
 
