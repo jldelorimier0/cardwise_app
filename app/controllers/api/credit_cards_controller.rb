@@ -52,16 +52,21 @@ class Api::CreditCardsController < ApplicationController
       personal_value_travel_airport_lounge_access_12mo: 80, 
       personal_value_concierge_service: 0, 
       spending_dining_total_monthly: 450, 
-      global_entry_boolean: true, 
-      # tsa_pre_boolean: "na", 
-      # personal_value_global_entry_and_tsa_pre: "na", 
-      # personal_value_global_entry: "na", 
-      # personal_value_tsa_pre: "na"
+      global_entry_boolean: false, 
+      #true
+      tsa_pre_boolean: false,
+      #false
+      personal_value_global_entry_and_tsa_pre: 1, 
+      personal_value_global_entry: 1, 
+      personal_value_tsa_pre: 1
     )
     p "*********PRINTING THE USER**********"
     p user
     p "*********PRINTING USER'S ANSWERS**********"
-    answers = { 
+    answers = 
+    #Brian's way to make rspec tests dynamic based on users: instead of having an answers hash built into the method, make the answers hash params that are sent in by the user. Then in the csr_spec.rb file, you will have a params hash in each test. That way you can write tests that depend on different user inputs. 
+    #params
+    { 
       :spending_total_all_credit_cards_monthly => user.spending_total_all_credit_cards_monthly,
       :spending_amount_movable_monthly => user.spending_amount_movable_monthly, 
       :spending_willing_to_change_credit_cards_monthly => user.spending_willing_to_change_credit_cards_monthly, 
@@ -97,6 +102,11 @@ class Api::CreditCardsController < ApplicationController
     user_lyft_annual_spending = user_lyft_monthly_spending*12
     user_meal_delivery_total_monthly = answers[:spending_meal_deliverly_total_monthly]
     user_meal_delivery_total_annual = user_meal_delivery_total_monthly*12
+    user_already_has_global_entry = answers[:global_entry_boolean]
+    user_already_has_tsa_pre = answers[:tsa_pre_boolean]
+    user_global_entry_and_tsa_pre_personal_value = answers[:personal_value_global_entry_and_tsa_pre]
+    user_global_entry_personal_value = answers[:personal_value_global_entry]
+    user_tsa_pre_personal_value = answers[:personal_value_tsa_pre]
     points = 0
     p "The user_monthly_spending variable is $#{user_monthly_spending}"
     p "The user_annual_spending variable is $#{user_annual_spending}"
@@ -107,6 +117,11 @@ class Api::CreditCardsController < ApplicationController
     p "The user_lyft_annual_spending variable is $#{user_lyft_annual_spending}"
     p "The user_meal_delivery_total_monthly variable is $#{user_meal_delivery_total_monthly}"
     p "The user_meal_delivery_total_annual variable is $#{user_meal_delivery_total_annual}"
+    p "Does the user already have global entry? #{user_already_has_global_entry}"
+    p "Does the user already have tsa pre-check? #{user_already_has_tsa_pre}"
+    p "The user values both global entry & tsa pre-check together for the next 5 years at $#{user_global_entry_and_tsa_pre_personal_value}"
+    p "The user already has tsa pre-check, but would be willing to pay an additional $#{user_global_entry_personal_value} for global entry for next 5 years in addition to that value"
+    p "If the user valued global entry + TSA pre at less than $100 together, aka the personal_value_global_entry_and_tsa_pre variable, then what the user values TSA pre-check as is relevant: The user doesn't have global entry or pre-check and values pre-check alone at $#{user_tsa_pre_personal_value}"
     p "Points earned so far is 0."
 
     # $300 ANNUAL TRAVEL CREDIT
@@ -185,21 +200,56 @@ class Api::CreditCardsController < ApplicationController
     if user_meal_delivery_total_annual >=60
       p "Adding $60 to benefits for $60 DashPass Credit."
       benefit+=60
+      p "User benefit is now $#{benefit}"
     elsif user_meal_delivery_total_annual <60
       p "Adding $#{user_meal_delivery_total_annual} to benefits for DashPass Credit."
       benefit+=user_meal_delivery_total_annual
+      p "User benefit is now $#{benefit}"
     else
-      p "User benefit is now #{benefit}"
+      p "User benefit is still $#{benefit}"
     end
 
-
-    
-
     # GLOBAL ENTRY/TSA PRE-CHECK APPLICATION CREDITS:
+      #User already has Global Entry:
+    if user_already_has_global_entry == true
+      p "This user already has global entry, so this credit is not worth anything to them, so nothing happens to their benefits."
+      #User doesn't have Global Entry or TSA pre-check:
+    elsif user_already_has_global_entry==false && user_already_has_tsa_pre==false 
+      p "This user doesn't have global entry or pre-check yet."
+      if user_global_entry_and_tsa_pre_personal_value>=100
+        p "You said that you would place the value of global entry plus TSA pre-check for the next 5 years at a value greater than or equal to $100. Because you said this, we assume you will get global entry. CSR reimburses the whole global entry fee (which comes with TSA pre-check), so we're adding $100 to your user benefit of this card."
+        benefit+=100
+        p "User benefit now totals #{benefit}"
+        p "User benefit now totals #{benefit}"
+      elsif user_global_entry_and_tsa_pre_personal_value<100 && user_tsa_pre_personal_value>=85
+        p "You said that you would pay between $85 and $100 for just TSA pre-check, but wouldn't be willing to pay $100 for Global Entry. The actual price to apply for TSA pre-check is $85, so we're adding $85 to you benefit."
+        benefit+=85
+        p "User benefit now totals #{benefit}"
+        #*** I DON'T KNOW IF THE ELSIF ABOVE OR BELOW MAKES MORE SENSE. NEED TO DECIDE. I THINK WE CAN'T HAVE BOTH.
+      elsif user_global_entry_and_tsa_pre_personal_value<100
+        p "You said that you would place the value of global entry plus TSA pre-check for the next 5 years at some value less than $100. Because you said this, we assume that global entry has a monetary value to you, but is not worth the full $100 it usually costs. CSR reimburses the whole global entry fee (which comes with TSA pre-check), which you valued personally at $#{user_global_entry_and_tsa_pre_personal_value}, so we're adding $#{user_global_entry_and_tsa_pre_personal_value} to your user benefit of this card."
+        benefit+=user_global_entry_and_tsa_pre_personal_value
+        p "User benefit now totals #{benefit}"
+      else
+      end
+      #User already has TSA pre-check, but not Global Entry: 
+    elsif user_already_has_global_entry==false && user_already_has_tsa_pre==true
+      p "This user already has pre-check, but doesn't have Global Entry. We need to find out how much value they place on getting just Global Entry, and then add either add the real cost of it ($100) or the dollar amount they value it at to their benefit."
+      if user_global_entry_personal_value >=100
+        p "You said that you would place the value of global entry plus TSA pre-check for the next 5 years at a value greater than or equal to $100. Because you said this, we assume you will get global entry. CSR reimburses the whole global entry fee (which comes with TSA pre-check), so we're adding $100 to your user benefit of this card."
+        benefit+=100
+        p "User benefit now totals #{benefit}"
+      elsif user_global_entry_personal_value <100
+        p "You said that you would pay less than $100 just to get global entry for the next 5 years in addition to the TSA pre-check you already have. CSR will reimburse the whole Global Entry application fee, which you said you would pay $#{user_global_entry_personal_value} for, so we're adding $#{user_global_entry_personal_value} to your benefits amount."
+        benefit+=user_global_entry_personal_value
+        p "User benefit now totals #{benefit}"
+      else
+      end
+    else
+    end
 
-
-
-
+    #FINAL POINT TO DOLLARS CONVERSION
+    "The user_travel_spending_annual_simple variable is currently #{user_travel_spending_annual_simple}. The user still has #{points} points."
 
 
     #THE METHOD BELOW IS INCORRECT. You don't get a $300 credit for a $4000 spending in 3 months. You've conflated two different benefits here.
@@ -217,7 +267,7 @@ class Api::CreditCardsController < ApplicationController
     #THE FIND_BY LINE BELOW IS SUPPOSED TO BE COMMENTED OUT... IT'S GIVING ME AN ERROR AND I THINK HAS A SYNTAX ISSUE AND SEEMS TO NOT BE NEEDED.
     # find_by(card_name: "Chase Sapphire Reserve")
     cost = card.annual_fee
-    p "THE CURRENT BENEFIT IS $#{benefit}"
+    p "THE CURRENT BENEFIT IS $#{benefit} and the user has #{points} points."
     p "THE COST IS $#{cost}"
     netbenefit = benefit - cost
     render json: {netbenefit: netbenefit, benefit: benefit}
