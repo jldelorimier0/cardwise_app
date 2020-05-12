@@ -38,7 +38,8 @@ class Api::CreditCardsController < ApplicationController
       spending_total_all_credit_cards_monthly: 2300,
       spending_amount_movable_monthly: true, 
       # spending_willing_to_change_credit_cards_monthly: "na", 
-      spending_lyft_total_monthly: 80,
+      spending_lyft_total_monthly: 0,
+      #80
       personal_value_lyft_priority_airport_pickup_12mo: 60, 
       personal_value_lyft_cancel_ride_times_monthly: 0, 
       personal_value_lyft_lose_something_times_12mo: 1, 
@@ -46,7 +47,8 @@ class Api::CreditCardsController < ApplicationController
       #30
       #0 
       spending_meal_deliverly_delivery_fee_monthly: 0, 
-      spending_travel_flights_next_12mo: 4000, 
+      spending_travel_flights_next_12mo: 0, 
+      #4000
       #800
       spending_travel_hotels_next_12mo: 0, 
       personal_value_travel_airport_lounge_access_12mo: 80, 
@@ -242,14 +244,42 @@ class Api::CreditCardsController < ApplicationController
       elsif user_global_entry_personal_value <100
         p "You said that you would pay less than $100 just to get global entry for the next 5 years in addition to the TSA pre-check you already have. CSR will reimburse the whole Global Entry application fee, which you said you would pay $#{user_global_entry_personal_value} for, so we're adding $#{user_global_entry_personal_value} to your benefits amount."
         benefit+=user_global_entry_personal_value
-        p "User benefit now totals #{benefit}"
+        p "User benefit now totals $#{benefit}"
       else
       end
     else
     end
 
     #FINAL POINT TO DOLLARS CONVERSION
-    "The user_travel_spending_annual_simple variable is currently #{user_travel_spending_annual_simple}. The user still has #{points} points."
+    p "The user_travel_spending_annual_simple variable is currently $#{user_travel_spending_annual_simple}. The user still has #{points} points."
+      #What the user's points are worth in dollars if they're all spent on travel:
+    travel_dollars_value_from_points = points*1.5/100
+    p "The user has $#{travel_dollars_value_from_points} travel_dollars_value_from_points."
+    if travel_dollars_value_from_points < user_travel_spending_annual_simple
+      p "Since you plan to spend an additional $#{user_travel_spending_annual_simple} (after your $300 travel credit) on travel throughout the year, and your total estimated points are worth $#{travel_dollars_value_from_points} if they're used towards travel, we'll assume you're going to use all of these points towards travel, and that your points are therefore worth $#{travel_dollars_value_from_points} to you, so we'll add $#{travel_dollars_value_from_points} to your total benefit:"
+      benefit+=travel_dollars_value_from_points
+      p "Your benefit now totals $#{benefit}"
+      p "Subtracting $#{travel_dollars_value_from_points} from user_travel_spending_annual_simple variable and #{points} points from your points variable..."
+      user_travel_spending_annual_simple -= travel_dollars_value_from_points
+      points -= points
+      p "The user_travel_spending_annual_simple variable is now $#{user_travel_spending_annual_simple}."  
+      p "The user now has #{points} points."  
+    elsif user_travel_spending_annual_simple < travel_dollars_value_from_points
+      p "This user's points would be worth $#{travel_dollars_value_from_points} if they spent them all on travel, but they only intend to spend $#{user_travel_spending_annual_simple} more on travel this year."
+      points_used_for_travel = user_travel_spending_annual_simple/1.5*100
+      p "$#{user_travel_spending_annual_simple} for travel is equal to #{points_used_for_travel} points. We'll add $#{user_travel_spending_annual_simple} to your benefits, and subtract #{points_used_for_travel} points from your total points."
+      benefit+=user_travel_spending_annual_simple
+      points -= points_used_for_travel
+      p "The user's benefit is now $#{benefit}; the user now has #{points} points."
+      cash_back_from_points = points/100
+      p "Your points won't expire if you want to use them for travel later (they're worth $#{travel_dollars_value_from_points} if you use them for travel), but even if you cash them out the same year as cash back, you'll get $#{cash_back_from_points} cash back from your remaining #{points} points (1 cent per point)."
+      p "Adding $#{cash_back_from_points} to your benefit for cash back... Subtracting #{points} from your points..."
+      benefit+=cash_back_from_points
+      points-=points
+      p "Your benefit is now $#{benefit}; you now have #{points} points."
+    else
+    end
+
 
 
     #THE METHOD BELOW IS INCORRECT. You don't get a $300 credit for a $4000 spending in 3 months. You've conflated two different benefits here.
@@ -270,6 +300,14 @@ class Api::CreditCardsController < ApplicationController
     p "THE CURRENT BENEFIT IS $#{benefit} and the user has #{points} points."
     p "THE COST IS $#{cost}"
     netbenefit = benefit - cost
+    p "THE NET BENEFIT TO THE USER IS $#{netbenefit}"
+
+    if netbenefit>0
+      p "You should get this card! It's worth $#{netbenefit} to you AFTER the fee!"
+    elsif netbenefit<0
+      p "This card isn't worth it for you! You'll just be paying $#{netbenefit} for a fancy piece of plastic. Don't do it!"
+    end
+
     render json: {netbenefit: netbenefit, benefit: benefit}
     # This is what my rspec file sees:
     # answers = {netbenefit: netbenefit, benefit: benefit}
