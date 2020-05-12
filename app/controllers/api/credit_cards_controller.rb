@@ -31,84 +31,105 @@ class Api::CreditCardsController < ApplicationController
   end
   p "BEFORE THE CSR COST BENEFIT METHOD"
   def chase_sapphire_reserve_cost_benefit_analysis
-    user = User.create!(
-      name: "fake",
-      email: "fake@gmail.com",
-      password: "password",
-      spending_total_all_credit_cards_monthly: 2300,
-      spending_amount_movable_monthly: true, 
-      # spending_willing_to_change_credit_cards_monthly: "na", 
-      spending_lyft_total_monthly: 0,
-      #80
-      personal_value_lyft_priority_airport_pickup_12mo: 60, 
-      personal_value_lyft_cancel_ride_times_monthly: 0, 
-      personal_value_lyft_lose_something_times_12mo: 1, 
-      spending_meal_deliverly_total_monthly: 2,
-      #30
-      #0 
-      spending_meal_deliverly_delivery_fee_monthly: 0, 
-      spending_travel_flights_next_12mo: 0, 
-      #4000
-      #800
-      spending_travel_hotels_next_12mo: 0, 
-      personal_value_travel_airport_lounge_access_12mo: 80, 
-      personal_value_concierge_service: 0, 
-      spending_dining_total_monthly: 450, 
-      global_entry_boolean: false, 
-      #true
-      tsa_pre_boolean: false,
-      #false
-      personal_value_global_entry_and_tsa_pre: 1, 
-      personal_value_global_entry: 1, 
-      personal_value_tsa_pre: 1
-    )
-    p "*********PRINTING THE USER**********"
-    p user
-    p "*********PRINTING USER'S ANSWERS**********"
-    answers = 
+    # user = User.create!(
+    #   name: "fake",
+    #   email: "fake@gmail.com",
+    #   password: "password",
+    #   spending_total_all_credit_cards_monthly: 2300,
+    #   spending_amount_movable_monthly: true, 
+    #   # spending_willing_to_change_credit_cards_monthly: "na", 
+    #   spending_lyft_total_monthly: 0,
+    #   #80
+    #   personal_value_lyft_priority_airport_pickup_12mo: 60, 
+    #   personal_value_lyft_cancel_ride_times_monthly: 0, 
+    #   personal_value_lyft_lose_something_times_12mo: 1, 
+    #   spending_meal_deliverly_total_monthly: 2,
+    #   #30
+    #   #0 
+    #   spending_meal_deliverly_delivery_fee_monthly: 0, 
+    #   spending_travel_flights_next_12mo: 0, 
+    #   #4000
+    #   #800
+    #   spending_travel_hotels_next_12mo: 0, 
+    #   personal_value_travel_airport_lounge_access_12mo: 80, 
+    #   personal_value_concierge_service: 0, 
+    #   spending_dining_total_monthly: 450, 
+    #   global_entry_boolean: false, 
+    #   #true
+    #   tsa_pre_boolean: false,
+    #   #false
+    #   personal_value_global_entry_and_tsa_pre: 1, 
+    #   personal_value_global_entry: 1, 
+    #   personal_value_tsa_pre: 1
+    # )
+    # p "*********PRINTING THE USER**********"
+    # p user
+    # p "*********PRINTING USER'S ANSWERS**********"
+    answers = params
     #Brian's way to make rspec tests dynamic based on users: instead of having an answers hash built into the method, make the answers hash params that are sent in by the user. Then in the csr_spec.rb file, you will have a params hash in each test. That way you can write tests that depend on different user inputs. 
     #params
-    { 
-      :spending_total_all_credit_cards_monthly => user.spending_total_all_credit_cards_monthly,
-      :spending_amount_movable_monthly => user.spending_amount_movable_monthly, 
-      :spending_willing_to_change_credit_cards_monthly => user.spending_willing_to_change_credit_cards_monthly, 
-      :spending_lyft_total_monthly => user.spending_lyft_total_monthly, 
-      :personal_value_lyft_priority_airport_pickup_12mo => user.personal_value_lyft_priority_airport_pickup_12mo, 
-      :personal_value_lyft_cancel_ride_times_monthly => user.personal_value_lyft_cancel_ride_times_monthly, 
-      :personal_value_lyft_lose_something_times_12mo => user.personal_value_lyft_lose_something_times_12mo, 
-      :spending_meal_deliverly_total_monthly => user.spending_meal_deliverly_total_monthly, 
-      :spending_meal_deliverly_delivery_fee_monthly => user.spending_meal_deliverly_delivery_fee_monthly, 
-      :spending_travel_flights_next_12mo => user.spending_travel_flights_next_12mo, 
-      :spending_travel_hotels_next_12mo => user.spending_travel_hotels_next_12mo, 
-      :personal_value_travel_airport_lounge_access_12mo => user.personal_value_travel_airport_lounge_access_12mo, 
-      :personal_value_concierge_service => user.personal_value_concierge_service, 
-      :spending_dining_total_monthly => user.spending_dining_total_monthly, 
-      :global_entry_boolean => user.global_entry_boolean, 
-      :tsa_pre_boolean => user.tsa_pre_boolean, 
-      :personal_value_global_entry_and_tsa_pre => user.personal_value_global_entry_and_tsa_pre, 
-      :personal_value_global_entry => user.personal_value_global_entry, 
-      :personal_value_tsa_pre => user.personal_value_tsa_pre
-    }
-    p "********DOES THIS PRINT THEIR ANSWERS AGAIN? no, you're printing them first below, silly.***********"
+    # { 
+    #   :spending_total_all_credit_cards_monthly => user.spending_total_all_credit_cards_monthly,
+    #   :spending_amount_movable_monthly => user.spending_amount_movable_monthly, 
+    #   :spending_willing_to_change_credit_cards_monthly => user.spending_willing_to_change_credit_cards_monthly, 
+    #   :spending_lyft_total_monthly => user.spending_lyft_total_monthly, 
+    #   :personal_value_lyft_priority_airport_pickup_12mo => user.personal_value_lyft_priority_airport_pickup_12mo, 
+    #   :personal_value_lyft_cancel_ride_times_monthly => user.personal_value_lyft_cancel_ride_times_monthly, 
+    #   :personal_value_lyft_lose_something_times_12mo => user.personal_value_lyft_lose_something_times_12mo, 
+    #   :spending_meal_deliverly_total_monthly => user.spending_meal_deliverly_total_monthly, 
+    #   :spending_meal_deliverly_delivery_fee_monthly => user.spending_meal_deliverly_delivery_fee_monthly, 
+    #   :spending_travel_flights_next_12mo => user.spending_travel_flights_next_12mo, 
+    #   :spending_travel_hotels_next_12mo => user.spending_travel_hotels_next_12mo, 
+    #   :personal_value_travel_airport_lounge_access_12mo => user.personal_value_travel_airport_lounge_access_12mo, 
+    #   :personal_value_concierge_service => user.personal_value_concierge_service, 
+    #   :spending_dining_total_monthly => user.spending_dining_total_monthly, 
+    #   :global_entry_boolean => user.global_entry_boolean, 
+    #   :tsa_pre_boolean => user.tsa_pre_boolean, 
+    #   :personal_value_global_entry_and_tsa_pre => user.personal_value_global_entry_and_tsa_pre, 
+    #   :personal_value_global_entry => user.personal_value_global_entry, 
+    #   :personal_value_tsa_pre => user.personal_value_tsa_pre
+    # }
+    p "********PRINTING ANSWERS, WHICH IS EQUAL TO THE PARAMS HASH***********"
     p answers
     p "*******************"
     # p answers[:spending_total_all_credit_cards_monthly]
     card = CreditCard.first
     benefit = 0
-    user_monthly_spending = answers[:spending_total_all_credit_cards_monthly]
+    #USER VARIABLES BASED ON "ANSWERS" HASH
+    user_monthly_spending = answers[:spending_total_all_credit_cards_monthly].to_i
     user_annual_spending = user_monthly_spending*12
-    user_travel_spending_annual_simple = answers[:spending_lyft_total_monthly]*12 + answers[:spending_travel_flights_next_12mo] + answers[:spending_travel_hotels_next_12mo]
-    user_dining_monthly_spending = answers[:spending_dining_total_monthly]
+    user_travel_spending_annual_simple = answers[:spending_lyft_total_monthly].to_i*12 + answers[:spending_travel_flights_next_12mo].to_i + answers[:spending_travel_hotels_next_12mo].to_i
+    user_dining_monthly_spending = answers[:spending_dining_total_monthly].to_i
     user_dining_annual_spending = user_dining_monthly_spending*12
-    user_lyft_monthly_spending = answers[:spending_lyft_total_monthly]
+    user_lyft_monthly_spending = answers[:spending_lyft_total_monthly].to_i
     user_lyft_annual_spending = user_lyft_monthly_spending*12
-    user_meal_delivery_total_monthly = answers[:spending_meal_deliverly_total_monthly]
+    user_lyft_airport_priority_pickup_year_personal_value = answers[:personal_value_lyft_priority_airport_pickup_12mo].to_i
+    user_meal_delivery_total_monthly = answers[:spending_meal_deliverly_total_monthly].to_i
     user_meal_delivery_total_annual = user_meal_delivery_total_monthly*12
     user_already_has_global_entry = answers[:global_entry_boolean]
     user_already_has_tsa_pre = answers[:tsa_pre_boolean]
-    user_global_entry_and_tsa_pre_personal_value = answers[:personal_value_global_entry_and_tsa_pre]
-    user_global_entry_personal_value = answers[:personal_value_global_entry]
-    user_tsa_pre_personal_value = answers[:personal_value_tsa_pre]
+    user_global_entry_and_tsa_pre_personal_value = answers[:personal_value_global_entry_and_tsa_pre].to_i
+    user_global_entry_personal_value = answers[:personal_value_global_entry].to_i
+    user_tsa_pre_personal_value = answers[:personal_value_tsa_pre].to_i
+    user_airport_lounge_access_year_personal_value = answers[:personal_value_travel_airport_lounge_access_12mo].to_i
+    user_concierge_service_year_personal_value = answers[:personal_value_concierge_service].to_i
+    #END OF VARIABLES DEFINED BASED ON ANSWERS HASH
+    #USER VARIABLES BASED ON "PARAMS" HASH
+    # user_monthly_spending = params[:spending_total_all_credit_cards_monthly]
+    # user_annual_spending = user_monthly_spending*12
+    # user_travel_spending_annual_simple = params[:spending_lyft_total_monthly]*12 + params[:spending_travel_flights_next_12mo] + params[:spending_travel_hotels_next_12mo]
+    # user_dining_monthly_spending = params[:spending_dining_total_monthly]
+    # user_dining_annual_spending = user_dining_monthly_spending*12
+    # user_lyft_monthly_spending = params[:spending_lyft_total_monthly]
+    # user_lyft_annual_spending = user_lyft_monthly_spending*12
+    # user_meal_delivery_total_monthly = params[:spending_meal_deliverly_total_monthly]
+    # user_meal_delivery_total_annual = user_meal_delivery_total_monthly*12
+    # user_already_has_global_entry = params[:global_entry_boolean]
+    # user_already_has_tsa_pre = params[:tsa_pre_boolean]
+    # user_global_entry_and_tsa_pre_personal_value = params[:personal_value_global_entry_and_tsa_pre]
+    # user_global_entry_personal_value = params[:personal_value_global_entry]
+    # user_tsa_pre_personal_value = params[:personal_value_tsa_pre]
+    #END OF VARIABLES DEFINED BASED ON PARAMS HASH
     points = 0
     p "The user_monthly_spending variable is $#{user_monthly_spending}"
     p "The user_annual_spending variable is $#{user_annual_spending}"
@@ -117,13 +138,15 @@ class Api::CreditCardsController < ApplicationController
     p "The user_dining_annual_spending variable is $#{user_dining_annual_spending}"
     p "The user_lyft_monthly_spending variable is $#{user_lyft_monthly_spending}"
     p "The user_lyft_annual_spending variable is $#{user_lyft_annual_spending}"
+    p "The user_lyft_airport_priority_pickup_year_personal_value variable is $#{user_lyft_airport_priority_pickup_year_personal_value}."
     p "The user_meal_delivery_total_monthly variable is $#{user_meal_delivery_total_monthly}"
     p "The user_meal_delivery_total_annual variable is $#{user_meal_delivery_total_annual}"
     p "Does the user already have global entry? #{user_already_has_global_entry}"
     p "Does the user already have tsa pre-check? #{user_already_has_tsa_pre}"
     p "The user values both global entry & tsa pre-check together for the next 5 years at $#{user_global_entry_and_tsa_pre_personal_value}"
     p "The user already has tsa pre-check, but would be willing to pay an additional $#{user_global_entry_personal_value} for global entry for next 5 years in addition to that value"
-    p "If the user valued global entry + TSA pre at less than $100 together, aka the personal_value_global_entry_and_tsa_pre variable, then what the user values TSA pre-check as is relevant: The user doesn't have global entry or pre-check and values pre-check alone at $#{user_tsa_pre_personal_value}"
+    p "If the user valued global entry + TSA pre at less than $100 together, aka the personal_value_global_entry_and_tsa_pre variable, then what the user values TSA pre-check at is relevant: The user doesn't have global entry or pre-check and values pre-check alone at $#{user_tsa_pre_personal_value}"
+    p "The user_airport_lounge_access_year_personal_value variable is $#{user_airport_lounge_access_year_personal_value}."
     p "Points earned so far is 0."
 
     # $300 ANNUAL TRAVEL CREDIT
@@ -138,11 +161,11 @@ class Api::CreditCardsController < ApplicationController
     else
     end
     p "The user_travel_spending_annual_simple variable is now $#{user_travel_spending_annual_simple}"
-    p "The benefit to the user is now #{benefit}."
+    p "The benefit to the user is now $#{benefit}."
 
-    # 50,000 POINT SIGN-ON BONUS FOR FIRST YEAR
+    # 50,000 POINT SIGN-UP BONUS FOR FIRST YEAR
     if user_monthly_spending * 3 >= 4000
-      p "Adding 50000 points to the user for meeting the requirements of the sign-on bonus by spending over $4000 in 3 months."
+      p "Adding 50000 points to the user for meeting the requirements of the sign-up bonus by spending over $4000 in 3 months."
       points += 50000
       #BEGINNING OF IF STATEMENT I COMMENTED OUT.
       #Now I am thinking about it and realizing maybe I need to shape this method more in terms of points rather than dollars spent and each individual credit. 
@@ -157,10 +180,10 @@ class Api::CreditCardsController < ApplicationController
       #   fiveHundredDividedByOnePointFive = user_travel_spending_annual_simple/1.5
       #   p "fiveHundredDividedByOnePointFive = #{user_travel_spending_annual_simple/1.5}"
       #   leftover_points_after_used_for_travel = card.sign_on_bonus_points - (user_travel_spending_annual_simple/1.5)*100
-      #   p "You have #{leftover_points_after_used_for_travel} points left from your sign-on bonus after using the rest of them on travel."
+      #   p "You have #{leftover_points_after_used_for_travel} points left from your sign-up bonus after using the rest of them on travel."
       #   p "Subtracting $#{user_travel_spending_annual_simple} from the user_travel_spending_annual_simple variable."
       #   user_travel_spending_annual_simple -= user_travel_spending_annual_simple
-      #   p "Adding $#{leftover_points_after_used_for_travel/100} to your benefit for cash back after using the rest of your sign-on bonus points towards travel."
+      #   p "Adding $#{leftover_points_after_used_for_travel/100} to your benefit for cash back after using the rest of your sign-up bonus points towards travel."
       #   benefit += leftover_points_after_used_for_travel/100
       # else
       # end
@@ -192,6 +215,11 @@ class Api::CreditCardsController < ApplicationController
     p "User benefits now total $#{benefit}"
     lyft_annual_spending_after_15_percent_off = user_lyft_annual_spending*0.85
     p "After saving 15% off Lyft, the user will still spend $#{lyft_annual_spending_after_15_percent_off} on Lyft annually."
+
+    # PERSONAL VALUE ATTRIBUTABLE TO OTHER LYFT_PINK MEMBERSHIP FEATURES:
+    p "You said getting free priority pickup at airports from Lyft for a year is worth $#{user_lyft_airport_priority_pickup_year_personal_value} to you, so we're adding $#{user_lyft_airport_priority_pickup_year_personal_value} to your benefit..."
+    benefit+=user_lyft_airport_priority_pickup_year_personal_value
+    p "User benefit is now $#{benefit}."
 
     # 10 POINT BACK FOR EVERY DOLLAR SPENT ON LYFT
     p "Adding #{lyft_annual_spending_after_15_percent_off * 10} points for the user from their annual Lyft spending (after accounting for 15% off)."
@@ -249,6 +277,14 @@ class Api::CreditCardsController < ApplicationController
       end
     else
     end
+
+    # PERSONAL VALUE ATTRIBUTION TO OTHER VARIOUS FEATURES:
+    p "You said that you would pay $#{user_airport_lounge_access_year_personal_value} for airport lounge access for a year, so we're adding $#{user_airport_lounge_access_year_personal_value} to your benefit..."
+    benefit+=user_airport_lounge_access_year_personal_value
+    p "User benefit now is $#{benefit}."
+    p "You said that you would pay $#{user_concierge_service_year_personal_value} for complimentary concierge service for a year, so we're adding $#{user_concierge_service_year_personal_value} to your benefit..."
+    benefit+=user_concierge_service_year_personal_value
+    p "User benefit now is $#{benefit}."
 
     #FINAL POINT TO DOLLARS CONVERSION
     p "The user_travel_spending_annual_simple variable is currently $#{user_travel_spending_annual_simple}. The user still has #{points} points."
