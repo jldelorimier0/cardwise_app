@@ -147,6 +147,7 @@ class Api::CreditCardsController < ApplicationController
     p "The user already has tsa pre-check, but would be willing to pay an additional $#{user_global_entry_personal_value} for global entry for next 5 years in addition to that value"
     p "If the user valued global entry + TSA pre at less than $100 together, aka the personal_value_global_entry_and_tsa_pre variable, then what the user values TSA pre-check at is relevant: The user doesn't have global entry or pre-check and values pre-check alone at $#{user_tsa_pre_personal_value}"
     p "The user_airport_lounge_access_year_personal_value variable is $#{user_airport_lounge_access_year_personal_value}."
+    p "The user_concierge_service_year_personal_value variable is $#{user_concierge_service_year_personal_value}."
     p "Points earned so far is 0."
 
     # $300 ANNUAL TRAVEL CREDIT
@@ -167,6 +168,9 @@ class Api::CreditCardsController < ApplicationController
     if user_monthly_spending * 3 >= 4000
       p "Adding 50000 points to the user for meeting the requirements of the sign-up bonus by spending over $4000 in 3 months."
       points += 50000
+      p "The user_travel_spending_annual_simple variable is now $#{user_travel_spending_annual_simple}."
+      p "The benefit to the user is now $#{benefit}."
+      p "The user now has #{points} points."
       #BEGINNING OF IF STATEMENT I COMMENTED OUT.
       #Now I am thinking about it and realizing maybe I need to shape this method more in terms of points rather than dollars spent and each individual credit. 
       # if user_travel_spending_annual_simple >= 750
@@ -190,20 +194,21 @@ class Api::CreditCardsController < ApplicationController
     #END OF THE IF STATEMENT I COMMENTED OUT
     else
       #you get no sign on bonus, so nothing happens.
+      p "The user is projected to spend only $#{user_monthly_spending*3} in the first 90 days of having the credit card, and therefore will not spend enough to get the sign-up bonus."
+      p "The user_travel_spending_annual_simple variable is STIL $#{user_travel_spending_annual_simple}."
+      p "The benefit to the user is still $#{benefit}."
+      p "The user still has #{points} points."
     end
-    p "The user_travel_spending_annual_simple variable is now $#{user_travel_spending_annual_simple}."
-    p "The benefit to the user is now $#{benefit}."
-    p "The user now has #{points} points."
 
     # 3% CASH BACK ON DINING
-    p "Adding #{user_dining_annual_spending *3} points to the user's points from annual spending on dining."
+    p "You said you generally spend $#{user_dining_monthly_spending} per month dining out, or $#{user_dining_annual_spending} per year. This card gives you 3 points per dollar spent on dining, so adding #{user_dining_annual_spending *3} points to the user's points from annual spending on dining."
     points += user_dining_annual_spending *3
     p "The user now has #{points} points."
 
     # 1% CASH BACK ON EVERYTHING ELSE
     user_annual_spending_excluding_travel_and_dining_and_lyft = user_annual_spending - user_travel_spending_annual_simple - user_dining_annual_spending
     p "The user spends $#{user_annual_spending_excluding_travel_and_dining_and_lyft} per year on credit cards excluding spending on travel, dining, and Lyft. This number is the value of the user_annual_spending_excluding_travel_and_dining_and_lyft variable."
-    p "Adding #{user_annual_spending_excluding_travel_and_dining_and_lyft} points to the user for this spending."
+    p "The Chase Sapphire Reserve gives you 3 points back on every dollar spent on travel, so we're adding #{user_annual_spending_excluding_travel_and_dining_and_lyft} points to the user for this spending."
     # p "I have #{points} points"
     points += user_annual_spending_excluding_travel_and_dining_and_lyft 
     p "The user now has #{points} points."
@@ -338,13 +343,16 @@ class Api::CreditCardsController < ApplicationController
     netbenefit = benefit - cost
     p "THE NET BENEFIT TO THE USER IS $#{netbenefit}"
 
+    final_message = ""
     if netbenefit>0
       p "You should get this card! It's worth $#{netbenefit} to you AFTER the fee!"
-    elsif netbenefit<0
+      final_message += "You should get this card! It's worth $#{netbenefit} to you AFTER the fee!"
+    elsif netbenefit<=0
       p "This card isn't worth it for you! You'll just be paying $#{netbenefit} for a fancy piece of plastic. Don't do it!"
+      final_message += "This card isn't worth it for you! You'll just be paying $#{netbenefit} for a fancy piece of plastic. Don't do it!"
     end
 
-    render json: {netbenefit: netbenefit, benefit: benefit}
+    render json: {benefit: benefit, cost: cost, netbenefit: netbenefit, final_message: final_message}
     # This is what my rspec file sees:
     # answers = {netbenefit: netbenefit, benefit: benefit}
   end
@@ -353,7 +361,14 @@ end
 
 
 #Sentence version of the answers hash:
-# "How much do you generally spend on your personal credit cards combined/month?": 2300, "Could you move that full amount of spending each month onto one new credit card if it benefitted you?": true, "If no, How much of your current spending per month would you be willing to divert to this credit card?": "NA", "If you had to put a dollar value for yourself personally on getting free priority from Lyft in airport pick ups for a whole year, how much would that be worth to you in dollars? If this is something you would never spend money on, you should say zero.": 60, "How many times a month on average do you think you cancel a Lyft ride?": 0, "How many times a year do you leave something in a Lyft?": 1, "How much would you say you spend per year on meal delivery services such as Doordash, Postmates, or Grubhub?": 0, "How much would you say you spend per year on JUST DELIVERY FEES from meal delivery services such as Doordash, Postmates, or Grubhub?": 0, "How much do you plan to spend in the next 12 months on flights? If you don't have a plan, then how much do you think you've spent historically on average each year?": 4000, "How much do you plan to spend in the next 12 months on hotels?": 0, "If you had to put a dollar value for yourself personally on free luxury airport lounge access that included access to free food and beverages for a whole year, how much would that be worth to you in dollars? If this is something you would never spend money on, you should say zero.": 80, "Some question about free concierge service after I figure out what that is. If this is something you would never spend money on, you should say zero.": 0, "How much do you tend to spend per month dining out?": 450, "Do you already have Global Entry": true, "If no, do you already have TSA pre-check?": "NA", "If you don't have either yet, if you had to put a dollar value for yourself personally how much would pre-check plus global entry be worth to you in dollars if it lasted for 5 years? If this is something you would never spend money on, you should say zero.": "NA", "If you have pre-check but not global entry, how much would you pay to just get global entry?": "NA", "If you don't have either, and TSA+Global entry is worth less than $100 to you, how much is just pre-check for 5 years worth?": "NA"
+# "How much do you generally spend on your personal credit cards combined/month?": 2300, 
+# "Could you move that full amount of spending each month onto one new credit card if it benefitted you?": true, 
+# "If no, How much of your current spending per month would you be willing to divert to this credit card?": "NA", 
+# "If you had to put a dollar value for yourself personally on getting free priority from Lyft in airport pick ups for a whole year, how much would that be worth to you in dollars? If this is something you would never spend money on, you should say zero.": 60, 
+# "How many times a month on average do you think you cancel a Lyft ride?": 0, 
+# "How many times a year do you leave something in a Lyft?": 1, 
+# "How much would you say you spend per year on meal delivery services such as Doordash, Postmates, or Grubhub?": 0, 
+# "How much would you say you spend per year on JUST DELIVERY FEES from meal delivery services such as Doordash, Postmates, or Grubhub?": 0, "How much do you plan to spend in the next 12 months on flights? If you don't have a plan, then how much do you think you've spent historically on average each year?": 4000, "How much do you plan to spend in the next 12 months on hotels?": 0, "If you had to put a dollar value for yourself personally on free luxury airport lounge access that included access to free food and beverages for a whole year, how much would that be worth to you in dollars? If this is something you would never spend money on, you should say zero.": 80, "Some question about free concierge service after I figure out what that is. If this is something you would never spend money on, you should say zero.": 0, "How much do you tend to spend per month dining out?": 450, "Do you already have Global Entry?": true, "If no, do you already have TSA pre-check?": "NA", "If you don't have either yet, if you had to put a dollar value for yourself personally how much would pre-check plus global entry be worth to you in dollars if it lasted for 5 years? If this is something you would never spend money on, you should say zero.": "NA", "If you have pre-check but not global entry, how much would you pay to just get global entry?": "NA", "If you don't have either, and TSA+Global entry is worth less than $100 to you, how much is just pre-check for 5 years worth?": "NA"
 
 
 # a User will have:
