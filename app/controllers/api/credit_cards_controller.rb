@@ -98,6 +98,7 @@ class Api::CreditCardsController < ApplicationController
     #USER VARIABLES BASED ON "ANSWERS" HASH
     user_monthly_spending = answers[:spending_total_all_credit_cards_monthly].to_i
     user_annual_spending = user_monthly_spending*12
+    # user_amount_movable = answers[:spending_amount_movable_monthly]
     user_travel_spending_annual_simple = answers[:spending_lyft_total_monthly].to_i*12 + answers[:spending_travel_flights_next_12mo].to_i + answers[:spending_travel_hotels_next_12mo].to_i
     user_dining_monthly_spending = answers[:spending_dining_total_monthly].to_i
     user_dining_annual_spending = user_dining_monthly_spending*12
