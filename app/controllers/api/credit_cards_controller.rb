@@ -106,8 +106,18 @@ class Api::CreditCardsController < ApplicationController
     user_lyft_airport_priority_pickup_year_personal_value = answers[:personal_value_lyft_priority_airport_pickup_12mo].to_i
     user_meal_delivery_total_monthly = answers[:spending_meal_deliverly_total_monthly].to_i
     user_meal_delivery_total_annual = user_meal_delivery_total_monthly*12
-    user_already_has_global_entry = answers[:global_entry_boolean]
-    user_already_has_tsa_pre = answers[:tsa_pre_boolean]
+    if answers[:global_entry_boolean] == "true"
+      user_already_has_global_entry = true
+    elsif answers[:global_entry_boolean] == "false"
+      user_already_has_global_entry = false
+    end
+    # user_already_has_global_entry = answers[:global_entry_boolean]
+    if answers[:tsa_pre_boolean] == "true"
+      user_already_has_tsa_pre = true
+    elsif answers[:tsa_pre_boolean] == "false"
+      user_already_has_tsa_pre = false
+    end
+    # user_already_has_tsa_pre = answers[:tsa_pre_boolean]
     user_global_entry_and_tsa_pre_personal_value = answers[:personal_value_global_entry_and_tsa_pre].to_i
     user_global_entry_personal_value = answers[:personal_value_global_entry].to_i
     user_tsa_pre_personal_value = answers[:personal_value_tsa_pre].to_i
@@ -245,6 +255,7 @@ class Api::CreditCardsController < ApplicationController
     end
 
     # GLOBAL ENTRY/TSA PRE-CHECK APPLICATION CREDITS:
+    p "*****Right before I'm supposed to print Global Entry benefits*****"
       #User already has Global Entry:
     if user_already_has_global_entry == true
       p "This user already has global entry, so this credit is not worth anything to them, so nothing happens to their benefits."
@@ -346,10 +357,10 @@ class Api::CreditCardsController < ApplicationController
     final_message = ""
     if netbenefit>0
       p "You should get this card! It's worth $#{netbenefit} to you AFTER the fee!"
-      final_message += "You should get this card! It's worth $#{netbenefit} to you AFTER the fee!"
+      final_message += "You should get this card! It's worth $#{netbenefit} to you AFTER the fee! Click on the link below to apply.*"
     elsif netbenefit<=0
       p "This card isn't worth it for you! You'll just be paying $#{netbenefit} for a fancy piece of plastic. Don't do it!"
-      final_message += "This card isn't worth it for you! You'll just be paying $#{netbenefit} for a fancy piece of plastic. Don't do it!"
+      final_message += "This card isn't worth it for you! You'll just be paying $#{-netbenefit} for a fancy piece of plastic. Don't do it!"
     end
 
     render json: {benefit: benefit, cost: cost, netbenefit: netbenefit, final_message: final_message}
